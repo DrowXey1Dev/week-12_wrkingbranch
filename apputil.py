@@ -6,7 +6,53 @@ import matplotlib.pyplot as plt
 
 
 def update_board(current_board):
-    # your code here ...
+    """
+    Perform the step of conway's game of life on a binary numpy array
+
+    Function parameters:
+    current_board : numpy.ndarray (a 2D binary array (elements 0 or 1) representing the current board state)
+
+    Function returns:
+    numpy.ndarray (the updated board after applying one iteration of Conway's rules)
+    """
+    #copy board before updating
+    board = current_board.copy()
+    rows, cols = board.shape
+
+    #create new board to fill
+    new_board = np.zeros((rows, cols), dtype=int)
+
+    #count the neighbors using convolution logic
+    for r in range(rows):
+        for c in range(cols):
+
+            #define 8 neighborhood coordinates
+            neighbors = [
+                (r-1, c-1), (r-1, c), (r-1, c+1),
+                (r,   c-1),           (r,   c+1),
+                (r+1, c-1), (r+1, c), (r+1, c+1)
+            ]
+
+            #count active neighbors
+            active_neighbors = 0
+            for x, y in neighbors:
+                if 0 <= x < rows and 0 <= y < cols:
+                    active_neighbors += board[x, y]
+
+            cell = board[r, c]
+
+            #apply conways rules:
+            if cell == 1:
+                #recall that rule 1 and 3: survives with 2 or 3 neighbors
+                if active_neighbors in (2, 3):
+                    new_board[r, c] = 1
+            else:
+                #recall also that rule 4: reproduction with exactly 3 neighbors
+                if active_neighbors == 3:
+                    new_board[r, c] = 1
+
+    #prep to pass out the board based off of the existing program sturcture
+    current_board = new_board
     updated_board = current_board
 
     return updated_board
